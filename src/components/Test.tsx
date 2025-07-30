@@ -2,18 +2,25 @@ import { useApp, EventBus } from '@hansekontor/wallet-sdk';
 import { useEffect } from 'react';
 
 export const Test = () => {
-    const { wallet, addWallet, cashtab, changeWallet, updateWallet, deleteWallet, send } = useApp();
+    const { wallet, addWallet, cashtab, changeWallet, updateWallet, deleteWallet, send, status } = useApp();
 
     useEffect(() => {
         EventBus.on("WALLET_UPDATED", (event: string, type: string) => console.log("EVENT", event, "type", type));
         EventBus.on("WALLET_CHANGED", (event: string, type: string) => console.log("EVENT", event, "type", type));
         EventBus.on("WALLET_ADDED", (event: string, type: string) => console.log("EVENT", event, "type", type));
         EventBus.on("WALLET_DELETED", (event: string, type: string) => console.log("EVENT", event, "type", type));
-
+        EventBus.on("WALLET_LOADED", (event: string, type: string) => console.log("EVENT", event, "type", type));
+        EventBus.on("TOKENS_SENT", (event: string, type: string) => console.log("EVENT", event, "type", type));
     }, [])
 
+    useEffect(() => {
+        console.log("status", status);
+    }, [status]);
+
+
     const handleCreateWallet = () => {
-        addWallet();
+        const activateWallet = false;
+        addWallet(activateWallet);
     }
     
     const handleChangeWallet = (name: string) => {
@@ -43,6 +50,8 @@ export const Test = () => {
             <div className='card'>
                 <div>Balance: {wallet?.state.balances.totalBalance}</div>
                 <div>Satoshi Balance: {wallet?.state.balances.totalBalanceInSatoshis}</div>
+                <div>Prod Token Balance: {wallet?.state.slp.tokens.prod.balance}</div>
+                <div>Sandbox Token Balance: {wallet?.state.slp.tokens.sandbox.balance}</div>
             </div>
             <div className='card'>
                 <button onClick={handleCreateWallet}>Create Wallet</button>
